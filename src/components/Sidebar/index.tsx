@@ -26,7 +26,7 @@ export function Sidebar() {
           <li>
             <NavLink to='/'>
               <BurguerIcon />
-              <span>Hamburgueres</span>
+              <span>Hamburguer</span>
             </NavLink>
           </li>
 
@@ -40,14 +40,14 @@ export function Sidebar() {
           <li>
             <NavLink to='drinks'>
               <SodaPopIcon />
-              <span>Bebidas</span>
+              <span>Drinks</span>
             </NavLink>
           </li>
 
           <li>
             <NavLink to='ice-creams'>
               <IceCreamIcon />
-              <span>Sorvetes</span>
+              <span>Ice Cream</span>
             </NavLink>
           </li>
         </ul>

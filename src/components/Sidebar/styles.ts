@@ -63,6 +63,8 @@ export const Container = styled.aside<ContainerProps>`
         }
 
         span {
+          width: 6rem;
+          height: 1rem;
           font-size: 1rem;
           font-weight: 500;
           transition: color 0.3s;
