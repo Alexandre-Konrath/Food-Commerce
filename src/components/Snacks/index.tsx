@@ -1,21 +1,29 @@
-import { Container } from "./style"
+import { currencyFormat } from "../../helpers/currencyFormat"
 
+import { SnackData } from "../../interfaces/snackData"
+import { SkeletonSnack } from "./SkeletonSnack"
+
+import { Container } from "./styles"
 import { FiPlus } from 'react-icons/fi'
 
+
 interface SnacksProps {
-  snacks: any[]
+  snacks: SnackData[]
 }
 
 export function Snacks({ snacks }: SnacksProps) {
   return (
     <Container>
-      {snacks.map((snack) => (
+      {!snacks.length
+      // mapeia os 4 elementos do esqueleto dos snacks
+      ? [ 1, 2, 3, 4 ].map((n) => <SkeletonSnack key={n} />)
+      : snacks.map((snack) => (
         <div key={snack.id} className='snack'>
           <h2>{snack.name}</h2>
           <img src={snack.image} alt={snack.name} />
           <p>{snack.description}</p>
           <div>
-            <strong>{snack.price}</strong>
+            <strong>{currencyFormat(snack.price)}</strong>
             <button title='botão adicionar ao carrinho' type='button'>
               <FiPlus />
             </button>
