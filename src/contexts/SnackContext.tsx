@@ -1,4 +1,4 @@
-import { Children, ReactNode, createContext, useEffect, useState } from 'react'
+import { ReactNode, createContext, useEffect, useState } from 'react'
 
 import { SnackData } from '../interfaces/snackData'
 import { getBurgers, getDrinks, getIceCreams, getPizzas } from '../services/api'
