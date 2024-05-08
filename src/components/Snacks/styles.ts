@@ -33,6 +33,7 @@ export const Container = styled.div`
       font-size: 1.125rem;
 
       background: ${({ theme }) => theme.colors.red};
+      border: 2px solid ${({ theme }) => theme.colors.black};
     }
 
     h2 {
