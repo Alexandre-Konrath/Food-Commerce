@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 
 import { Sidebar } from '../../components/Sidebar'
+import { MyOrder } from '../../components/MyOrder'
 import { Container } from './styles'
 
 import LogoImg from '../../assets/img/logo.svg'
@@ -13,6 +14,7 @@ export default function Main() {
         <img src={LogoImg} alt='Imagem logo' />
         <Outlet /> {/* indicador de sub paginas */}
       </section>
+      <MyOrder />
     </Container>
   )
 }
