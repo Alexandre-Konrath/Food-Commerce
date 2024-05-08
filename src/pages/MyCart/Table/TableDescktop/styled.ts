@@ -1,0 +1,124 @@
+import styled from "styled-components";
+
+export const Container = styled.main`
+  padding: 2rem 2.5rem;
+  border-radius: 8px;
+
+  background: ${({ theme }) => theme.colors.black};
+
+  table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    border-spacing: 0 0;
+
+    th {
+      text-transform: uppercase;
+      text-align: left;
+
+      padding: 0 1rem 0.5rem 1rem;
+      font-size: 1.125rem;
+      font-weight: 500;
+
+      &:nth-child(2) {  //* a cada dois ele ira ajustar
+        padding-left: 2rem;
+      }
+    }
+
+    td {
+      border-bottom: 1px solid;
+      padding: 1.5rem 1.5rem 1.5rem 1.5rem;
+      padding-top: 1.5rem;
+
+      ${({ theme }) => theme.colors.gray600};
+
+      h4 {
+        margin-bottom: 0.5rem;
+        font-size: 1.125rem;
+        font-weight: 400;
+      }
+
+      > span {
+        font-weight: 500;
+        font-size: 1.5rem
+      }
+
+      // quantidade
+      div {
+        display: flex;
+        align-items: center;
+
+        gap: 0.5rem;
+
+        button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+
+          background: none;
+          border: none;
+
+          flex: 0;
+
+          span {
+            background-color: red;
+          }
+
+          img {
+            width: 1.25rem;
+          }
+        }
+      }
+
+
+      h5 {
+        font-weight: 700;
+        font-size: 1.5rem;
+      }
+
+      &:first-child {
+        width: 7.5rem;
+        padding-left: 0;
+        padding-right: 0;
+
+        img {
+          object-fit: cover;
+          width: 7.5rem;
+          height: 7.5rem;
+          border-radius: 8px;
+        }
+      }
+
+      &:nth-child(2) {
+        padding-left: 2rem;
+      }
+
+      &:nth-child(3),
+      &:nth-child(4) {
+        width: 11rem;
+      }
+
+      &:last-child {
+        width: 1.5rem;
+        padding-left: 0;
+
+        button {
+          background: none;
+          border: none;
+          width: 100%;
+
+          display: flex;
+          align-items: center;
+          justify-content: flex-end;
+
+          svg {
+            fill: ${({ theme }) => theme.colors.yellow};
+            width: 1.5rem;
+            height: 1.5rem;
+          }
+        }
+      }
+    }
+  }
+`;
