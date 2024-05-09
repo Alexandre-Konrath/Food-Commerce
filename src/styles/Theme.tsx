@@ -34,6 +34,7 @@ export const theme: DefaultTheme = {
     gray900: '#141518',
     primary: '#F83600',
     secondary: '#FE8C00',
+    error: '#fc4242',
   },
   fontFamily: {
     heading: ['IBM Plex Sans', 'sans-serif'].join(','),

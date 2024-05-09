@@ -29,6 +29,7 @@ declare module 'styled-components' {
       gray900: string
       primary: string
       secondary: string
+      error: string
     }
     fontFamily: {
       heading: string
