@@ -9,10 +9,7 @@ export function PayOrder() {
 
   return (
     <Container>
-      <button type='submit' title='botao'>
-        {' '}
-        Pagar{' '}
-      </button>
+      <button type='submit' title='botao'>Pagar</button>
       <span>
         Total <strong>{currencyFormat(totalAmount)}</strong>
       </span>

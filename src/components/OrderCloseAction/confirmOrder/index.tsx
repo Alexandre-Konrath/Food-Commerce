@@ -10,8 +10,7 @@ export function ConfirmOrder() {
   return (
     <Container>
       <button type='button' title='botao' onClick={confirmOrder}>
-        {' '}
-        Finalizar Pedido{' '}
+        Finalizar Pedido
       </button>
       <span>
         Total <strong>{currencyFormat(totalAmount)}</strong>
