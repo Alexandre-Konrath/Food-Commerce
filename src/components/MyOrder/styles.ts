@@ -13,11 +13,10 @@ export const Container = styled(Link)`
   display: flex;
   align-items: center;
 
-  transition: background-color, transform 0.2s;
+  transition: background-color 0.2s;
 
   &:hover {
     background-color: ${({ theme }) => theme.colors.redhover};
-    transform: scale(1.1);
   }
 
   span:first-child { // primeiro span
@@ -27,7 +26,7 @@ export const Container = styled(Link)`
   }
 
   svg {
-    fill: ${({ theme }) => theme.colors.white}; // color
+    fill: ${({ theme }) => theme.colors.yellow}; // color
     width: 2rem;
     height: 2rem;
   }

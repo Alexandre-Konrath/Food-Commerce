@@ -23,6 +23,10 @@ export const Container = styled.aside<ContainerProps>`
 
     background: none;
     border: none;
+
+    img {
+      color: ${({ theme }) => theme.colors.yellow};
+    }
   }
 
   nav {

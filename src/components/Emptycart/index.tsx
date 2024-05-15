@@ -1,4 +1,4 @@
-//? componente que aparece quando o carrinho esta vazío
+//! componente que aparece quando o carrinho esta vazío
 
 import { Button, Container } from "./styled"
 

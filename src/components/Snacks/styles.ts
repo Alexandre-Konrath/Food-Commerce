@@ -33,7 +33,6 @@ export const Container = styled.div`
       font-size: 1.125rem;
 
       background: ${({ theme }) => theme.colors.red};
-      border: 2px solid ${({ theme }) => theme.colors.black};
     }
 
     h2 {
@@ -71,27 +70,29 @@ export const Container = styled.div`
       }
 
       button {
-        width: 3rem;
-        height: 3rem;
+        width: 2.5rem;
+        height: 2.5rem;
 
         display: flex;
         justify-content: center;
         align-items: center;
 
         border-radius: 50%;
+        transform: scale(1.2);
 
         background: ${({ theme }) => theme.colors.red};
-        transition: background-color, transform 0.2s;
+        transition: background-color 0.2s, transform 0.2s;
 
         :hover{
           background-color: ${({ theme }) => theme.colors.redhover};
-          transform: scale(1.1);
-          border: 1px solid ${({ theme }) => theme.colors.black};
+        }
+        :active{
+          transform: scale(1.0);
         }
 
         svg {
-          width: 1.5rem;
-          height: 1.5rem;
+          width: 1.2rem;
+          height: 1.2rem;
 
           color: ${({ theme }) => theme.colors.white};
         }

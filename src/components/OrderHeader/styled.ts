@@ -50,7 +50,6 @@ export const Container = styled.header`
       height: 2.875rem;
 
       flex-shrink: 0;
-      margin-top: 20px;
 
       fill: ${({ theme }) => theme.colors.white};
     }

@@ -13,7 +13,7 @@ export const Title = styled.h1`
   font-size: ${({ theme }) => theme.fontSize["4xl"]}; // 2.75 x 16 = 44 === '4xl': rem(40),
   &::before {
     content: '';
-    background: ${({ theme }) => theme.colors.white};
+    background: ${({ theme }) => theme.colors.yellow};
     width: 35px;
     height: 5px;
     flex-shrink: 0;
