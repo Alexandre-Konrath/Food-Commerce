@@ -1,40 +1,59 @@
+// import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { IMaskInput } from 'react-imask'
+import { IMask, IMaskInput } from 'react-imask'
+import { toast } from 'react-toastify';
 
-import * as yup from 'yup'
+import axios, { AxiosResponse, AxiosError } from "axios";
+
+import { yupResolver } from '@hookform/resolvers/yup'
 
 import { PayOrder } from '../../components/OrderCloseAction/PayOrder'
 import { Head } from '../../components/Head'
 import { OrderHeader } from '../../components/OrderHeader'
 
+import { schema, FieldValues } from './Validation/validationSchema'
+
+import { CustomerData } from '../../interfaces/CostumerData'
+
+import { useCart } from '../../hooks/useCart'
+
 import { IoMdSearch } from 'react-icons/io'
 import { Container, Inner, Form } from './styles'
 
-//* esquema com o nome, email e celular para tratar os erros
-const schema = yup
-  .object({
-    fullName: yup
-      .string()
-      .required('Nome e sobrenome são obrigatórios.')
-      .min(3, 'Nome e sobrenome muito curto.'),
-    email: yup.string().email().required(),
-    mobile: yup.string().required(),
-  })
-  .required()
-
-type FieldValues = yup.InferType<typeof schema>
-
 export default function Payment() {
-  //* toda a vez que o submit for executado, ele dispara a função de erro
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<FieldValues>({
+
+  const { payOrder } = useCart()
+  const { control, handleSubmit, setValue, formState: { errors } } = useForm<FieldValues>({
     resolver: yupResolver(schema),
   })
-  const onSubmit: SubmitHandler<FieldValues> = (data) => console.log('data', data)
+
+  const cepValidation = async () => {
+    const zipCodeElement = document.getElementById('zipCode') as HTMLInputElement;
+    if (zipCodeElement) {
+      const cep = zipCodeElement.value;
+
+      try {
+        const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
+        if (!response.data.erro) {
+          setValue('street', response.data.logradouro || '');
+          setValue('neighborhood', response.data.bairro || '');
+          setValue('city', response.data.localidade || '');
+          setValue('state', response.data.uf || '');
+          setValue('number', ''); // Limpar o campo número
+          const numberElement = document.getElementById('number') as HTMLInputElement;
+          if (numberElement) {
+            numberElement.focus(); // Definir o foco no campo número
+          }
+        } else {
+          toast.error('CEP inválido ou não encontrado .');
+        }
+      } catch (error) {
+        toast.error('O campo CEP está vázio.');
+      }
+    }
+  }
+
+  const onSubmit: SubmitHandler<FieldValues> = (data) => payOrder(data as CustomerData)
 
   return (
     <Container>
@@ -91,7 +110,23 @@ export default function Payment() {
 
             <div className='field'>
               <label htmlFor='document'>CPF/CNPJ</label>
-              <input type='text' id='document' name='document'/>
+              <Controller
+                name='document'
+                control={control}
+                render={({ field }) => (
+                  // mascara dinâmica para cpf e cnpj juntos
+                  <IMaskInput
+                    type='text'
+                    id='document'
+                    mask={[
+                      { mask: '000.000.000-00', maxLength: 11 },
+                      { mask: '00.000.000/0000-00' },
+                    ]}
+                    {...field}
+                  />
+                )}
+              />
+              {errors.document && <p className='error'>{errors.document.message}</p>}
             </div>
           </div>
 
@@ -100,47 +135,88 @@ export default function Payment() {
           <div className='field'>
             <div className="texto">
               <label htmlFor='zipCode'>CEP</label>
-              <p>pesquisar cep:</p>
             </div>
             <div id='txtCEP' className='btn-cep'>
-              <input type="text" id='zipCode' className='zipCode'  name='zipCode' autoComplete='postal-code'/>
-              <button className='btn-pesquisar' title='pesquisar cep' type='button'>
+              <Controller
+                  name='zipCode'
+                  control={control}
+                  render={({ field }) => (
+                    <IMaskInput
+                      type='text'
+                      id='zipCode'
+                      style={{ width: '130px' }}
+                      mask={'00000-000'}
+                      {...field}
+                    />
+                  )}
+                />
+              <button onClick={cepValidation} className='btn-pesquisar' title='pesquisar cep' type='button'>
                 <IoMdSearch />
               </button>
             </div>
+            {errors.zipCode && <p className='error'>{errors.zipCode.message}</p>}
           </div>
 
           <div className='field'>
             <label htmlFor='street'>Endereço</label>
-            <input type="text" id='street' name='street' autoComplete='street-address'/>
+            <Controller
+              name='street'
+              control={control}
+              render={({ field }) => <input type='text' id='street' {...field} />}
+            />
+            {errors.street && <p className='error'>{errors.street.message}</p>}
           </div>
 
           <div className='grouped'>
             <div className='field'>
               <label htmlFor='number'>Número</label>
-              <input type="text" id='number' name='number'/>
+              <Controller
+                name='number'
+                control={control}
+                render={({ field }) => <input type='text' id='number' {...field} />}
+              />
+              {errors.number && <p className='error'>{errors.number.message}</p>}
             </div>
 
             <div className='field'>
               <label htmlFor='complement'>Complemento</label>
-              <input type="text" id='complement' name='complement'/>
+              <Controller
+                name='complement'
+                control={control}
+                render={({ field }) => <input type='text' id='complement' {...field} />}
+              />
+              {errors.complement && <p className='error'>{errors.complement.message}</p>}
             </div>
           </div>
 
           <div className='grouped'>
             <div className='field'>
               <label htmlFor='neighborhood'>Bairro</label>
-              <input type="text" id='neighborhood' name='neighborhood'/>
+              <Controller
+                name='neighborhood'
+                control={control}
+                render={({ field }) => <input type='text' id='neighborhood' {...field} />}
+              />
+              {errors.neighborhood && <p className='error'>{errors.neighborhood.message}</p>}
             </div>
 
             <div className='field'>
               <label htmlFor='city'>Cidade</label>
-              <input type="text" id='city' name='city'/>
+              <Controller
+                name='city'
+                control={control}
+                render={({ field }) => <input type='text' id='city' {...field} />}
+              />
+              {errors.city && <p className='error'>{errors.city.message}</p>}
             </div>
 
             <div className='field'>
-              <label htmlFor='state'>Estado</label>
-                  <select id='state' name='state'>
+            <label htmlFor='state'>Estado</label>
+            <Controller
+                name='state'
+                control={control}
+                render={({ field }) => (
+                  <select id='state' {...field}>
                     <option value=''>Selecione</option>
                     <option value='AC'>Acre</option>
                     <option value='AL'>Alagoas</option>
@@ -170,30 +246,109 @@ export default function Payment() {
                     <option value='TO'>Tocantins</option>
                     <option value='DF'>Distrito Federal</option>
                   </select>
+                )}
+              />
+              {errors.state && <p className='error'>{errors.state.message}</p>}
             </div>
           </div>
 
           <h4>Pagamento</h4>
 
           <div className='field'>
-            <label htmlFor='credit-card-number'>Número do cartão</label>
-            <input type="text" id='credit-card-number' name='credit-card-number' autoComplete='cc-number' />
+            <label htmlFor='creditCardNumber'>Número do cartão</label>
+            <Controller
+              name='creditCardNumber'
+              control={control}
+              render={({ field }) => (
+                <IMaskInput
+                  type='text'
+                  id='creditCardNumber'
+                  // máscara com três tipos de cartão de crédito
+                  mask={[
+                    {
+                      mask: '0000 000000 0000',
+                      maxLength: 14,
+                    },
+                    {
+                      mask: '0000 000000 00000',
+                      maxLength: 15,
+                    },
+                    {
+                      mask: '0000 0000 0000 0000',
+                    },
+                  ]}
+                  {...field}
+                />
+              )}
+            />
+            {errors.creditCardNumber && <p className='error'>{errors.creditCardNumber.message}</p>}
           </div>
 
           <div className='field'>
-            <label htmlFor='credit-cart-holder-name'>Nome impresso no cartão</label>
-            <input type="text" id='credit-cart-holder-name' name='credit-cart-holder-name' autoComplete='cc-name' />
+            <label htmlFor='creditCardHolder'>Nome impresso no cartão</label>
+            <Controller
+              name='creditCardHolder'
+              control={control}
+              render={({ field }) => <input type='text' id='creditCardHolder' {...field} />}
+            />
+            {errors.creditCardHolder && <p className='error'>{errors.creditCardHolder.message}</p>}
           </div>
 
           <div className='grouped'>
             <div className='field'>
               <label htmlFor='credit-card-expiration'>Validade (MM/AA)</label>
-              <input type="text" id='credit-card-expiration' name='credit-card-expiration' autoComplete='cc-exp' />
+              <Controller
+                name='creditCardExpiration'
+                control={control}
+                render={({ field }) => (
+                  <IMaskInput
+                    type='text'
+                    id='creditCardExpiration'
+                    mask={[
+                      {
+                        mask: 'MM/YY',
+                        blocks: {
+                          // máscara de validação de més
+                          MM: {
+                            mask: IMask.MaskedRange,
+                            from: 1,
+                            to: 12,
+                          },
+                          // máscara de validação de ano
+                          YY: {
+                            mask: IMask.MaskedRange,
+                            // pega a data atual -2000 = ano atual
+                            from: new Date().getFullYear() - 2000,
+                            to: 99,
+                          },
+                        },
+                      },
+                    ]}
+                    {...field}
+                  />
+                )}
+              />
+              {errors.creditCardExpiration && (
+                <p className='error'>{errors.creditCardExpiration.message}</p>
+              )}
             </div>
 
             <div className='field'>
               <label htmlFor='credit-card-code'>Código de segurança (CVV)</label>
-              <input type="text" id='credit-card-code' name='credit-card-code' autoComplete='cc-csc' />
+              <Controller
+                name='creditCardSecurityCode'
+                control={control}
+                render={({ field }) => (
+                  <IMaskInput
+                    type='text'
+                    id='creditCardSecurityCode'
+                    mask={'0000'}
+                  {...field} />
+                )}
+              />
+              {errors.creditCardSecurityCode && (
+                <p className='error'>{errors.creditCardSecurityCode.message}</p>
+              )}
             </div>
           </div>
           <PayOrder />
