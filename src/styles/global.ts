@@ -45,4 +45,26 @@ export const GlobalStyle = createGlobalStyle`
   li {
     list-style: none;
   }
+
+  ::-webkit-scrollbar {
+    width: 8px; /* Largura da barra de rolagem */
+  }
+
+  ::-webkit-scrollbar-track {
+      background: transparent; /* Cor de fundo da barra de rolagem */
+  }
+
+  ::-webkit-scrollbar-thumb {
+      background: ${({ theme }) => theme.colors.yellow}; /* Cor do "thumb" (alça) da barra de rolagem */
+      border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: ${({ theme }) => theme.colors.yellow}; /* Cor do "thumb" (alça) da barra de rolagem ao passar o mouse */
+  }
+
+  /* Cor da barra de rolagem ao ser arrastada */
+  ::-webkit-scrollbar-thumb:active {
+    background: ${({ theme }) => theme.colors.yellow};
+  }
 `
