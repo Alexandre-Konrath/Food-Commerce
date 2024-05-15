@@ -13,7 +13,7 @@ export const theme: DefaultTheme = {
     white: '#FFFFFF',
     black: '#0C0D0F',
     red: '#E03131',
-    redhover: '#860e0e',
+    redhover: '#680101',
     orange: '#E8590C',
     yellow: '#FCC419',
     green: '#23DB42',
@@ -34,6 +34,7 @@ export const theme: DefaultTheme = {
     gray900: '#141518',
     primary: '#F83600',
     secondary: '#FE8C00',
+    secondary100: '#ff9b22',
     error: '#fc4242',
   },
   fontFamily: {
