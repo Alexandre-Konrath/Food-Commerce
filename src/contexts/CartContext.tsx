@@ -4,23 +4,22 @@ import { toast } from 'react-toastify';
 
 import { snackEmoji } from '../helpers/snackEmoji';
 
-import { SnackData } from '../interfaces/snackData';
+import { processCheckout } from '../services/api';
 
-//! além das propriedades do SnackData, vão ter mais essas
-interface Snack extends SnackData {
-  quantity: number
-  subtotal: number
-}
+import { CustomerData } from '../interfaces/CostumerData';
+import { SnackData } from '../interfaces/snackData';
+import { Snack } from '../interfaces/Snack';
+
 
 interface CartContextProps {
   cart: Snack[]
   // como estou defenindo uma interface, coloco void para não retornar nada
-  addSnackIntoCart: (snack: SnackData) => void  //? adicionar
+  addSnackIntoCart: (snack: SnackData) => void  //* adicionar
   removeSnackFromCart: (snack: Snack ) => void  //* remove
   snackCartIncrement: (snack: Snack) => void  //* adiciona 1 item ao carrinho
   snackCartDecrement: (snack: Snack) => void  //* remove 1 item ao carrinho
   confirmOrder: () => void  //* confirmação da compra e redireciona para a rota de pagamento
-  payOrder: () => void //*
+  payOrder: (customer: CustomerData) => void //* retorna os dados de carrinho e de pagamento
 }
 
 interface CartProviderProps {
@@ -28,10 +27,31 @@ interface CartProviderProps {
 }
 export const CartContext = createContext({} as CartContextProps)
 
-//! prove os dados do carrinho
+// constante com o nome do localStorage
+const localStorageKey = '@FoodCommerce:cart'
+
+//? prove os dados do carrinho
 export function CartProvider({ children }: CartProviderProps) {
   const navigate = useNavigate()
-  const [cart, setCart] = useState<Snack[]>([])
+  const [cart, setCart] = useState<Snack[]>(() => {
+    // recupera os itens salvos do localStorageKey e por na constante de value
+    const value = localStorage.getItem(localStorageKey)
+    if (value) return JSON.parse(value)
+
+    return []
+  })
+
+  //* função de salvar os dados de carrinho no localStorage
+  function saveCart(items: Snack[]) {
+    setCart(items)
+    // salvo os items no localStorage com o nome da constante
+    localStorage.setItem(localStorageKey, JSON.stringify(items))
+  }
+
+  //* função de limpar o localStorage
+  function clearCart() {
+    localStorage.removeItem(localStorageKey)
+  }
 
   //* função de adicionar ao carrinho
   function addSnackIntoCart(snack: SnackData): void {
@@ -57,7 +77,7 @@ export function CartProvider({ children }: CartProviderProps) {
       // mensagem de que o item foi para o carrinho
       toast.success(`Outro(a) ${snackEmoji(snack.snack)} ${snack.name} adicionado nos pedidos!`)
       // ja como o cart esta criado, apenas seto ele
-      setCart(newCart)
+      saveCart(newCart)
 
       return
     }
@@ -66,7 +86,7 @@ export function CartProvider({ children }: CartProviderProps) {
     const newCart = [...cart, newSnack] // push de um array que adiciona o snack no card
 
     toast.success(`${snackEmoji(snack.snack)} ${snack.name} adicionado nos pedidos!`)
-    setCart(newCart)
+    saveCart(newCart)
   }
 
   //* função de remover do carrinho
@@ -74,7 +94,7 @@ export function CartProvider({ children }: CartProviderProps) {
     // cria um novo array com o valo do carrinho filtrado
     const newCart = cart.filter((item) => !(item.id === snack.id && item.snack === snack.snack))
 
-    setCart(newCart)
+    saveCart(newCart)
   }
 
   //* atualiza o valor da quantidade
@@ -110,11 +130,27 @@ export function CartProvider({ children }: CartProviderProps) {
     updateSnackQuantity(snack, snack.quantity - 1)
   }
 
+  //* função de confirmação de carrinho/pedido
   function confirmOrder() {
     navigate('/payment')
   }
 
-  function payOrder() {
+  //* função de pagamento
+  async function payOrder(customer: CustomerData) {
+    // chamada de api para o back-end
+    try {
+      const response = await processCheckout(cart, customer)
+      if (response.data.status !== 'PAID') {
+        toast.error('Erro ao processar o pagamento, por favor, tente novamente mais tarde.')
+        return
+      }
+      // toast.success('Paramento realizado com sucesso!')
+      clearCart()
+      navigate(`/order/success/${response.data.id}`)
+    } catch (error) {
+      console.error(error)
+      toast.error('Erro ao processar o pedido.')
+    }
     return
   }
 
