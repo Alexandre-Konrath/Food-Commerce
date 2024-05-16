@@ -1,9 +1,6 @@
 // import { useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { IMask, IMaskInput } from 'react-imask'
-import { toast } from 'react-toastify';
-
-import axios, { AxiosResponse, AxiosError } from "axios";
 
 import { yupResolver } from '@hookform/resolvers/yup'
 
@@ -12,6 +9,7 @@ import { Head } from '../../components/Head'
 import { OrderHeader } from '../../components/OrderHeader'
 
 import { schema, FieldValues } from './Validation/validationSchema'
+import { cepValidation } from './Validation/cepValidation';
 
 import { CustomerData } from '../../interfaces/CostumerData'
 
@@ -27,31 +25,11 @@ export default function Payment() {
     resolver: yupResolver(schema),
   })
 
-  const cepValidation = async () => {
-    const zipCodeElement = document.getElementById('zipCode') as HTMLInputElement;
-    if (zipCodeElement) {
-      const cep = zipCodeElement.value;
+  //* função de validação do CEP
+  const cepValidationHandler = async () => {
+    await cepValidation(setValue, document);
+  };
 
-      try {
-        const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`);
-        if (!response.data.erro) {
-          setValue('street', response.data.logradouro || '');
-          setValue('neighborhood', response.data.bairro || '');
-          setValue('city', response.data.localidade || '');
-          setValue('state', response.data.uf || '');
-          setValue('number', ''); // Limpar o campo número
-          const numberElement = document.getElementById('number') as HTMLInputElement;
-          if (numberElement) {
-            numberElement.focus(); // Definir o foco no campo número
-          }
-        } else {
-          toast.error('CEP inválido ou não encontrado .');
-        }
-      } catch (error) {
-        toast.error('O campo CEP está vázio.');
-      }
-    }
-  }
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => payOrder(data as CustomerData)
 
@@ -150,7 +128,7 @@ export default function Payment() {
                     />
                   )}
                 />
-              <button onClick={cepValidation} className='btn-pesquisar' title='pesquisar cep' type='button'>
+              <button onClick={cepValidationHandler} className='btn-pesquisar' title='pesquisar cep' type='button'>
                 <IoMdSearch />
               </button>
             </div>

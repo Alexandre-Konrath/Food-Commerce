@@ -61,29 +61,50 @@ export const Form = styled.form`
     flex-direction: row;
 
     width: 1rem;
-
-    .btn-cep:focus {
-      background-color: ${({ theme }) => theme.colors.error};
-    }
   }
 
   .btn-pesquisar {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    border: none;
-    margin: 8px 28px 20px;
-    padding: 0px 10px;
-    border-radius: 4px;
+    width: 1px;
+    height: 1px;
+
+    position: relative;
+    top: 6px;
+    left: -35px;
+
     background-color: transparent;
 
-  }
-  svg {
-    width: 1.8rem;
-    height: 1.8rem;
+    ::before {
+      content: "Pesquisar CEP";
+    width: 7rem;
+    height: 1.2rem;
+
+    position: absolute;
+
+    opacity: 0; /* Começa com a mensagem invisível */
+    top: -6px;
+    left: 50px;
+    padding: 12px 10px;
+    font-size: 1rem;
+    border-radius: 4px;
+    transition: opacity 0.5s ease;
+
+    background-color: ${({ theme }) => theme.colors.gray800};
     color: ${({ theme }) => theme.colors.white};
   }
+    :hover::before {
+    opacity: 1;
+  }
+
+  }
+    svg {
+      width: 1.8rem;
+      height: 1.8rem;
+      color: ${({ theme }) => theme.colors.secondary100};
+
+      :hover {
+        color: ${({ theme }) => theme.colors.secondary};
+      }
+    }
 
 
   label {
